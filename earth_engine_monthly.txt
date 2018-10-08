@@ -1,0 +1,62 @@
+var l8 = ee.ImageCollection('LANDSAT/LC08/C01/T1');
+var lon = 77.09086772516025;
+var lat = 30.906183223907675;
+var zoom = 16; //16
+var navPoint = ee.Geometry.Point([lon, lat]);
+var style = "SATELLITE";
+Map.setCenter(lon, lat, zoom);
+Map.setOptions(style);
+
+var startMonth = 1, endMonth = 12;
+var spatialFiltered = l8.filterBounds(navPoint);
+
+/*
+var year = startYear;
+var temporalFiltered = spatialFiltered.filterDate(year +'-01-01', year + '-12-31');
+  var sorted = temporalFiltered.sort('CLOUD_COVER');
+  var scene = ee.Image(sorted.first());
+  print(year);
+  Map.addLayer(scene, {
+  bands: ['B3', 'B5', 'B2'], min: 0, max: 8400, gamma: 0
+}, "" + year, true, 0.3);
+
+*/
+
+for(var month = startMonth; month <= endMonth; month++) {
+  var month2 = ("0" + month).slice(-2);
+  var temporalFiltered = spatialFiltered.filterDate('2017-' + month2 + '-01', '2017-' + month2 + '-28');
+  var sorted = temporalFiltered.sort('CLOUD_COVER');
+  var scene = ee.Image(sorted.first());
+  print(month2);
+  Map.addLayer(scene, {
+                        bands: ['B3', 'B5', 'B2'], min: 0, max: [9500, 9500 , 0], gamma: 0
+                      }, "" + month2, true, 0.3);
+}
+
+ui.util.setTimeout(hideAll.bind(this, startMonth, endMonth, this, myFn), 10000);
+
+function hideAll(sMonth, eMonth, thisRef, nextFn) {
+  for(var i = 0; i <= eMonth - sMonth; i++){
+    Map.layers().get(i).set('shown', false);
+  }
+  trigger(sMonth, eMonth, nextFn, thisRef);
+}
+
+
+print(Map.layers());
+
+Map.addLayer(navPoint, {color: "FF0000", cursor: 'crosshair'}, "Target Area");
+
+function trigger(sMonth, eMonth, nextFn, thisRef) {
+  for(var i = 0; i <= eMonth - sMonth + 1; i++){
+    ui.util.setTimeout(nextFn.bind(thisRef, i, sMonth, eMonth), (i + 1) * 3000);
+  }
+}
+
+
+function myFn(index, sMonth, eMonth) {
+  for(var i=0; i<= eMonth - sMonth; i++) {
+    var show = (index == i);
+    Map.layers().get(i).set('shown', show);
+  }
+}

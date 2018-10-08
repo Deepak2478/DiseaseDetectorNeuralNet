@@ -1,0 +1,2 @@
+model_checkpoint_path: "C:\\Users\\I323802\\Desktop\\PlantDiseaseDetection\\healthyvsunhealthy-0.001-2conv-basic.model"
+all_model_checkpoint_paths: "C:\\Users\\I323802\\Desktop\\PlantDiseaseDetection\\healthyvsunhealthy-0.001-2conv-basic.model"
